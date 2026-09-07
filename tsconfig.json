@@ -1,0 +1,37 @@
+{
+  // The React labs in `src/` plus the Vite config. Emits nothing — it
+  // only has to typecheck and to resolve the library by its published name.
+  // The library has its own config under `packages/ai-sdk-provider`.
+  "compilerOptions": {
+    "target": "ES2022",
+    "module": "ESNext",
+    "moduleResolution": "bundler",
+    "lib": ["ES2022", "DOM", "DOM.Iterable"],
+    "types": ["node", "vite/client"],
+
+    "noEmit": true,
+    "sourceMap": true,
+    "jsx": "react-jsx",
+
+    "strict": true,
+    "noImplicitOverride": true,
+    "esModuleInterop": true,
+    "forceConsistentCasingInFileNames": true,
+    "skipLibCheck": true,
+    "isolatedModules": true,
+    "moduleDetection": "force",
+    "verbatimModuleSyntax": false,
+    "resolveJsonModule": true,
+
+    // Vite reads this natively via `resolve.tsconfigPaths`, so the
+    // site → source mapping is declared once, here, rather than being
+    // duplicated as a Vite alias. Pointing at the package's `src/`
+    // instead of its `dist/` is what makes editing the library
+    // hot-reload the page — no build, no `pnpm dev` in two terminals.
+    "paths": {
+      "@runjobsai/ai-sdk-provider": ["./packages/ai-sdk-provider/src/index.ts"]
+    }
+  },
+  "include": ["src/**/*.ts", "src/**/*.tsx", "vite.config.ts"],
+  "exclude": ["node_modules", "dist", "packages"]
+}

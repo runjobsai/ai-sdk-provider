@@ -1,0 +1,45 @@
+{
+  "name": "@runjobsai/ai-sdk-provider-playground",
+  "type": "module",
+  "version": "0.0.0",
+  "private": true,
+  "description": "Browser test harness for @runjobsai/ai-sdk-provider — and the workspace root",
+  "scripts": {
+    "dev": "vite",
+    "build": "pnpm --filter @runjobsai/ai-sdk-provider build && vite build",
+    "preview": "vite preview",
+    "typecheck": "pnpm --recursive typecheck && tsc -p tsconfig.json --noEmit",
+    "test": "pnpm --recursive test",
+    "test:watch": "pnpm --filter @runjobsai/ai-sdk-provider test:watch",
+    "clean": "pnpm --recursive clean && rm -rf dist"
+  },
+  "author": "hungtcs <hungtcs@outlook.com>",
+  "license": "MIT",
+  "engines": {
+    "node": ">=18"
+  },
+  "devEngines": {
+    "packageManager": {
+      "name": "pnpm",
+      "version": "^11.17.0",
+      "onFail": "download"
+    }
+  },
+  "dependencies": {
+    "@ai-sdk/react": "^4.0.96",
+    "@runjobsai/ai-sdk-provider": "workspace:*",
+    "@runjobsai/sdk": "^0.1.0",
+    "ai": "^7.0.93",
+    "react": "^19.2.8",
+    "react-dom": "^19.2.8",
+    "zod": "^4.5.4"
+  },
+  "devDependencies": {
+    "@types/node": "^26.4.1",
+    "@types/react": "^19.2.18",
+    "@types/react-dom": "^19.2.7",
+    "@vitejs/plugin-react": "^6.1.1",
+    "typescript": "^7.0.2",
+    "vite": "^8.2.2"
+  }
+}

@@ -1,0 +1,64 @@
+{
+  "name": "@runjobsai/ai-sdk-provider",
+  "type": "module",
+  "version": "0.0.0",
+  "description": "Vercel AI SDK provider for the RunJobs AI Gateway — sign in with runjobs.ai instead of minting an API key",
+  "keywords": [
+    "runjobs",
+    "ai",
+    "ai-sdk",
+    "vercel-ai-sdk",
+    "provider",
+    "llm",
+    "gateway",
+    "agent",
+    "openai-compatible"
+  ],
+  "author": "hungtcs <hungtcs@outlook.com>",
+  "license": "MIT",
+  "engines": {
+    "node": ">=18"
+  },
+  "sideEffects": false,
+  "main": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js"
+    },
+    "./package.json": "./package.json"
+  },
+  "files": [
+    "dist"
+  ],
+  "publishConfig": {
+    "access": "public"
+  },
+  "scripts": {
+    "dev": "tsdown --watch",
+    "build": "tsdown",
+    "typecheck": "tsc -p tsconfig.json --noEmit && tsc -p tsconfig.test.json --noEmit",
+    "test": "pnpm run build && vitest run",
+    "test:watch": "vitest",
+    "clean": "rm -rf dist",
+    "prepublishOnly": "pnpm run clean && pnpm run typecheck && pnpm run build"
+  },
+  "dependencies": {
+    "@ai-sdk/openai-compatible": "^3.0.44",
+    "@ai-sdk/provider": "^4.0.10",
+    "@ai-sdk/provider-utils": "^5.0.36"
+  },
+  "peerDependencies": {
+    "@runjobsai/sdk": "^0.1.0"
+  },
+  "devDependencies": {
+    "@runjobsai/sdk": "^0.1.0",
+    "@types/node": "^26.4.1",
+    "ai": "^7.0.93",
+    "tsdown": "^0.23.0",
+    "typescript": "^7.0.2",
+    "vitest": "^5.0.0",
+    "zod": "^4.5.4"
+  }
+}

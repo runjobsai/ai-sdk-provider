@@ -1,0 +1,12 @@
+{
+  // The suite and the two build configs. Everything strict is inherited;
+  // the one relaxation is for tests only — they index into recorded-call
+  // arrays constantly, and an out-of-range index already fails the
+  // assertion loudly.
+  "extends": "./tsconfig.json",
+  "compilerOptions": {
+    "noUncheckedIndexedAccess": false
+  },
+  "include": ["tests/**/*.ts", "tsdown.config.ts", "vitest.config.ts"],
+  "exclude": ["node_modules", "dist"]
+}

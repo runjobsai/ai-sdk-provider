@@ -5,7 +5,17 @@
   // assertion loudly.
   "extends": "./tsconfig.json",
   "compilerOptions": {
-    "noUncheckedIndexedAccess": false
+    "noUncheckedIndexedAccess": false,
+
+    // The suite imports the package by its published name. Without this
+    // mapping `tsc` resolves that through the package's own `exports`,
+    // i.e. to `dist/`, so typechecking would only pass when a build
+    // happened to be lying around — and would fail on a fresh clone, or
+    // straight after `pnpm clean`. Mirrors the alias in
+    // `vitest.config.ts`, which is what actually runs the tests.
+    "paths": {
+      "@runjobsai/ai-sdk-provider": ["./src/index.ts"]
+    }
   },
   "include": ["tests/**/*.ts", "tsdown.config.ts", "vitest.config.ts"],
   "exclude": ["node_modules", "dist"]

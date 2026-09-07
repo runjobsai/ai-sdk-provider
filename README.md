@@ -59,6 +59,7 @@ reachable gateway, while the chat example depends on the full stack.
 | 09  | Image generation  | `generateImage`, with gateway knobs via `providerOptions`   |
 | 10  | Text to speech    | `generateSpeech`, with voices from the catalog              |
 | 11  | Speech to text    | `transcribe`, multipart upload and segment timings          |
+| 12  | Swapping providers| The same `streamText` call against runjobs or DeepSeek       |
 
 A shared connection panel constructs one provider for all examples. Under
 `authProvider: "runjobs"` each provider owns a grant handshake and a token

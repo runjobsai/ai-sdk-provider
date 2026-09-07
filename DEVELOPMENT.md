@@ -127,6 +127,19 @@ body and it is natural to assume the gateway does too. Reading it that way
 succeeds, and produces a blob containing JSON text that no audio element will
 play. `tests/provider.test.ts` pins the real shape.
 
+## Structured output
+
+`createOpenAICompatible` is passed `supportsStructuredOutputs: true`. Without
+it, `@ai-sdk/openai-compatible` strips the schema out of a `generateObject` or
+`streamObject` request and only emits a warning. The model then answers in
+prose, and the call fails afterwards with `NoObjectGeneratedError: response did
+not match schema`, which points at the model rather than at the configuration.
+The gateway does honour `response_format: { type: "json_schema" }`; this was
+verified against it, and `tests/provider.test.ts` pins the request shape.
+
+`supportsStructuredOutputs` is exposed on `RunJobsProviderSettings` so it can be
+turned off for a model the gateway rejects it for.
+
 ## Audio models
 
 `@ai-sdk/openai-compatible` supplies neither a speech nor a transcription

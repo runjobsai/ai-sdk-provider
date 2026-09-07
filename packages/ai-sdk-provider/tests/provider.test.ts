@@ -1,5 +1,14 @@
 import { createAuthedFetch, createRunJobs } from "@runjobsai/ai-sdk-provider";
-import { experimental_generateSpeech as generateSpeech, experimental_transcribe as transcribe, generateImage, generateText, stepCountIs, streamText, tool } from "ai";
+import {
+  experimental_generateSpeech as generateSpeech,
+  experimental_transcribe as transcribe,
+  generateImage,
+  generateObject,
+  generateText,
+  stepCountIs,
+  streamText,
+  tool,
+} from "ai";
 import { expect, test } from "vitest";
 import { z } from "zod";
 
@@ -886,4 +895,48 @@ test("emits speech_to_text telemetry", async () => {
   await transcribe({ model: runjobs.transcriptionModel("Whisper"), audio: WAV });
 
   expect(capabilities).toContain("speech_to_text");
+});
+
+/* ------------------------------------------------------------------ */
+/* Structured output                                                   */
+/* ------------------------------------------------------------------ */
+
+/**
+ * `@ai-sdk/openai-compatible` drops a `generateObject` schema from the
+ * request unless the provider declares `supportsStructuredOutputs`, and
+ * only warns about it. The model then answers in prose and the call
+ * fails afterwards with `NoObjectGeneratedError`, which reads like a
+ * model problem rather than a configuration one. These pin the default.
+ */
+
+const cityCompletion = () => completion('{"city":"Shanghai"}');
+
+test("sends generateObject schemas to the gateway as json_schema", async () => {
+  const fetch = stubFetch(() => jsonResponse(cityCompletion()));
+  const runjobs = createRunJobs({ apiKey: "rk_obj", fetch });
+
+  const result = await generateObject({
+    model: runjobs("Claude Sonnet 4.6"),
+    schema: z.object({ city: z.string() }),
+    prompt: "Name a city.",
+  });
+
+  const [call] = fetch.calls;
+  expect(call.body.response_format?.type, "the schema must reach the wire").toBe("json_schema");
+  expect(call.body.response_format.json_schema.schema.properties.city).toBeDefined();
+  expect(result.object).toEqual({ city: "Shanghai" });
+});
+
+test("structured outputs can be switched off per provider", async () => {
+  const fetch = stubFetch(() => jsonResponse(cityCompletion()));
+  const runjobs = createRunJobs({ apiKey: "rk_obj", fetch, supportsStructuredOutputs: false });
+
+  await generateObject({
+    model: runjobs("Claude Sonnet 4.6"),
+    schema: z.object({ city: z.string() }),
+    prompt: "Name a city.",
+  });
+
+  // The escape hatch for a model the gateway rejects json_schema for.
+  expect(fetch.calls[0].body.response_format?.type).not.toBe("json_schema");
 });

@@ -85,6 +85,17 @@ export interface RunJobsProviderSettings extends ClientOptions {
   /** Ask for `usage` on the final streaming chunk. Default `true` —
    *  without it there's no cost or token count to report. */
   includeUsage?: boolean;
+  /**
+   * Send `generateObject` / `streamObject` schemas to the gateway as
+   * `response_format: { type: "json_schema" }`. Default `true`.
+   *
+   * With this off, `@ai-sdk/openai-compatible` drops the schema from
+   * the request and only warns; the model answers in prose and the
+   * call fails validation afterwards with `NoObjectGeneratedError`,
+   * which reads like a model problem rather than a config one. Turn it
+   * off only for a model the gateway rejects it for.
+   */
+  supportsStructuredOutputs?: boolean;
 }
 
 export interface RunJobsProvider extends ProviderV4 {
@@ -194,6 +205,7 @@ export function createRunJobs(settings: RunJobsProviderSettings = {}): RunJobsPr
     maxServerIterations,
     headers,
     includeUsage = true,
+    supportsStructuredOutputs = true,
     ...clientOptions
   } = settings;
 
@@ -249,6 +261,7 @@ export function createRunJobs(settings: RunJobsProviderSettings = {}): RunJobsPr
     name: PROVIDER_NAME,
     baseURL,
     includeUsage,
+    supportsStructuredOutputs,
     ...(headers && { headers }),
     // No `apiKey` here on purpose — a static Authorization header can't
     // carry a token that rotates. Auth happens per-request in `fetch`.

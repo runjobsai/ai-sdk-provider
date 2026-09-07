@@ -283,7 +283,7 @@ Events: `request:start`, `request:streamDelta`, `request:end`, `request:error`.
 
 | Export                       | Description                                                                                                                                          |
 | ---------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `createRunJobs(settings)`    | Constructs a provider. Accepts all `@runjobsai/sdk` `ClientOptions` fields, plus `client`, `serverTools`, `maxServerIterations`, `headers`, `includeUsage`. |
+| `createRunJobs(settings)`    | Constructs a provider. Accepts all `@runjobsai/sdk` `ClientOptions` fields, plus `client`, `serverTools`, `maxServerIterations`, `headers`, `includeUsage`, `supportsStructuredOutputs`. |
 | `runjobs`                    | Zero-configuration browser provider, equivalent to `createRunJobs({ authProvider: "runjobs" })`, constructed lazily on first use.                     |
 | `createAuthedFetch(options)` | The authentication and telemetry `fetch` in isolation, for use with another AI SDK provider.                                                          |
 | `runjobsMetadataExtractor`   | The cost metadata extractor in isolation.                                                                                                            |

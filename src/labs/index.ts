@@ -18,6 +18,8 @@ import SpeechLab, { meta as speech } from "./speech";
 import speechSource from "./speech.tsx?raw";
 import StreamText, { meta as streamText } from "./stream-text";
 import streamTextSource from "./stream-text.tsx?raw";
+import SwitchLab, { meta as switchLab } from "./switch";
+import switchSource from "./switch.tsx?raw";
 import Tools, { meta as tools } from "./tools";
 import toolsSource from "./tools.tsx?raw";
 import TranscriptionLab, { meta as transcription } from "./transcription";
@@ -55,4 +57,5 @@ export const labs: Lab[] = [
   { ...image, Demo: ImageLab, source: imageSource },
   { ...speech, Demo: SpeechLab, source: speechSource },
   { ...transcription, Demo: TranscriptionLab, source: transcriptionSource },
+  { ...switchLab, Demo: SwitchLab, source: switchSource },
 ];

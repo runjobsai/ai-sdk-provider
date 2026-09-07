@@ -1,7 +1,7 @@
 {
   "name": "@runjobsai/ai-sdk-provider",
   "type": "module",
-  "version": "0.0.0",
+  "version": "0.1.0",
   "description": "Vercel AI SDK provider for the RunJobs AI Gateway — sign in with runjobs.ai instead of minting an API key",
   "keywords": [
     "runjobs",
@@ -16,6 +16,15 @@
   ],
   "author": "hungtcs <hungtcs@outlook.com>",
   "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/runjobsai/ai-sdk-provider.git",
+    "directory": "packages/ai-sdk-provider"
+  },
+  "homepage": "https://github.com/runjobsai/ai-sdk-provider#readme",
+  "bugs": {
+    "url": "https://github.com/runjobsai/ai-sdk-provider/issues"
+  },
   "engines": {
     "node": ">=18"
   },

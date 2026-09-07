@@ -282,7 +282,7 @@ runjobs.events.on("request:end", (e) => {
 
 | 导出                         | 说明                                                                                                                      |
 | ---------------------------- | ------------------------------------------------------------------------------------------------------------------------- |
-| `createRunJobs(settings)`    | 构造 provider。接受 `@runjobsai/sdk` 的全部 `ClientOptions` 字段,以及 `client`、`serverTools`、`maxServerIterations`、`headers`、`includeUsage`。 |
+| `createRunJobs(settings)`    | 构造 provider。接受 `@runjobsai/sdk` 的全部 `ClientOptions` 字段,以及 `client`、`serverTools`、`maxServerIterations`、`headers`、`includeUsage`、`supportsStructuredOutputs`。 |
 | `runjobs`                    | 零配置的浏览器 provider,等价于 `createRunJobs({ authProvider: "runjobs" })`,首次使用时惰性构造。                         |
 | `createAuthedFetch(options)` | 独立的鉴权与遥测 `fetch`,可用于其他 AI SDK provider。                                                                     |
 | `runjobsMetadataExtractor`   | 独立的成本 metadata 提取器。                                                                                              |

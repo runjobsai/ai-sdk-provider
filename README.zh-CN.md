@@ -56,6 +56,7 @@ pnpm --filter @runjobsai/ai-sdk-provider build
 | 09  | 图像生成      | `generateImage`,网关参数经 `providerOptions` 传入      |
 | 10  | 文本转语音    | `generateSpeech`,音色取自模型目录                     |
 | 11  | 语音转文本    | `transcribe`,multipart 上传与分段时间轴               |
+| 12  | 切换 provider | 同一段 `streamText` 调用,分别打到 runjobs 与 DeepSeek  |
 
 顶部共用的连接面板为全部示例构造同一个 provider。在 `authProvider: "runjobs"` 下,
 每个 provider 各自拥有一次授权握手与一份 token 缓存,因此第二个 provider 会导致

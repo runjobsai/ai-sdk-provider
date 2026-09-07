@@ -2,3 +2,9 @@ node_modules/
 dist/
 *.tsbuildinfo
 .playwright-mcp/
+
+# Local secrets. `.env.example` documents the variables and is tracked;
+# everything else here can hold a real key and must never be committed.
+.env
+.env.*
+!.env.example

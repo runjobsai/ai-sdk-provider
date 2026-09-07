@@ -1,9 +1,19 @@
 import { createOpenAICompatible } from "@ai-sdk/openai-compatible";
-import type { EmbeddingModelV4, ImageModelV4, LanguageModelV4, ProviderV4 } from "@ai-sdk/provider";
+import type {
+  EmbeddingModelV4,
+  ImageModelV4,
+  LanguageModelV4,
+  ProviderV4,
+  SpeechModelV4,
+  TranscriptionModelV4,
+} from "@ai-sdk/provider";
 import { RunJobs, type BrowserUser, type ClientOptions, type SDKEvents } from "@runjobsai/sdk";
 
 import { createAuthedFetch } from "./auth-fetch.js";
+import { createRunJobsImageModel } from "./image-model.js";
 import { runjobsMetadataExtractor } from "./metadata.js";
+import { createRunJobsSpeechModel } from "./speech-model.js";
+import { createRunJobsTranscriptionModel } from "./transcription-model.js";
 
 /** Provider id. Also the `providerOptions` key — see {@link RunJobsProviderOptions}. */
 const PROVIDER_NAME = "runjobs";
@@ -85,6 +95,8 @@ export interface RunJobsProvider extends ProviderV4 {
   chatModel(modelId: string): LanguageModelV4;
   embeddingModel(modelId: string): EmbeddingModelV4;
   imageModel(modelId: string): ImageModelV4;
+  speechModel(modelId: string): SpeechModelV4;
+  transcriptionModel(modelId: string): TranscriptionModelV4;
 
   /**
    * The underlying `@runjobsai/sdk` client. This is the escape hatch to
@@ -218,21 +230,29 @@ export function createRunJobs(settings: RunJobsProviderSettings = {}): RunJobsPr
   const useBrowserAuth = client.auth != null && (typeof window !== "undefined" || staticResolver === undefined);
   const resolveToken = useBrowserAuth ? client.auth!.getToken : (staticResolver ?? (() => ""));
 
+  const baseURL = `${origin.replace(/\/+$/, "")}/v1`;
+
+  // One fetch for every model interface: the language and embedding
+  // models get it through `createOpenAICompatible`, the image model
+  // uses it directly. Sharing it is what keeps token refresh, the
+  // 401 retry and the event bus identical across all of them.
+  const authedFetch = createAuthedFetch({
+    resolveToken,
+    // Only meaningful when a rotating token is in play — invalidating
+    // a static key would just replay the same 401.
+    ...(useBrowserAuth && { onUnauthorized: () => client.auth!.invalidate() }),
+    events: client.events,
+    ...(clientOptions.fetch && { fetchImpl: clientOptions.fetch }),
+  });
+
   const base = createOpenAICompatible({
     name: PROVIDER_NAME,
-    baseURL: `${origin.replace(/\/+$/, "")}/v1`,
+    baseURL,
     includeUsage,
     ...(headers && { headers }),
     // No `apiKey` here on purpose — a static Authorization header can't
     // carry a token that rotates. Auth happens per-request in `fetch`.
-    fetch: createAuthedFetch({
-      resolveToken,
-      // Only meaningful when a rotating token is in play — invalidating
-      // a static key would just replay the same 401.
-      ...(useBrowserAuth && { onUnauthorized: () => client.auth!.invalidate() }),
-      events: client.events,
-      ...(clientOptions.fetch && { fetchImpl: clientOptions.fetch }),
-    }),
+    fetch: authedFetch,
     transformRequestBody: makeTransformRequestBody({
       ...(serverTools && { serverTools }),
       ...(maxServerIterations !== undefined && { maxServerIterations }),
@@ -247,7 +267,42 @@ export function createRunJobs(settings: RunJobsProviderSettings = {}): RunJobsPr
     languageModel: { value: (id: string) => base.languageModel(id) },
     chatModel: { value: (id: string) => base.chatModel(id) },
     embeddingModel: { value: (id: string) => base.embeddingModel(id) },
-    imageModel: { value: (id: string) => base.imageModel(id) },
+    imageModel: {
+      // Not `base.imageModel(id)`: the gateway returns image URLs and
+      // `@ai-sdk/openai-compatible` only parses `b64_json`. See
+      // `image-model.ts`.
+      value: (id: string) =>
+        createRunJobsImageModel({
+          modelId: id,
+          provider: `${PROVIDER_NAME}.image`,
+          metadataKey: PROVIDER_NAME,
+          baseURL,
+          fetch: authedFetch,
+          ...(headers && { headers }),
+        }),
+    },
+    speechModel: {
+      value: (id: string) =>
+        createRunJobsSpeechModel({
+          modelId: id,
+          provider: `${PROVIDER_NAME}.speech`,
+          optionsKey: PROVIDER_NAME,
+          baseURL,
+          fetch: authedFetch,
+          ...(headers && { headers }),
+        }),
+    },
+    transcriptionModel: {
+      value: (id: string) =>
+        createRunJobsTranscriptionModel({
+          modelId: id,
+          provider: `${PROVIDER_NAME}.transcription`,
+          optionsKey: PROVIDER_NAME,
+          baseURL,
+          fetch: authedFetch,
+          ...(headers && { headers }),
+        }),
+    },
     client: { value: client, enumerable: true },
     events: { value: client.events, enumerable: true },
     signIn: { value: () => client.signIn() },

@@ -1,5 +1,6 @@
-import { Fragment, useState } from "react";
+import { Fragment, useEffect, useState } from "react";
 
+import { highlightTsx } from "./highlight";
 import { labs } from "./labs";
 import { useRunJobs } from "./runjobs";
 import { Panel } from "./ui";
@@ -42,17 +43,52 @@ export function App() {
           </div>
         </header>
 
-        {/* Remount on lab change so each one starts from clean state. */}
-        <active.Demo key={active.id} />
+        {/* Remount on lab change so each one starts from clean state.
+            The prefixes matter: these are siblings, and two siblings
+            sharing a key breaks React's reconciliation — the outgoing
+            lab is never unmounted and every switch leaves another panel
+            behind. */}
+        <active.Demo key={`demo-${active.id}`} />
 
-        <details className="disclosure panel">
-          <summary>Source — src/labs/{active.id}.tsx</summary>
-          <pre className="source">{active.source}</pre>
-        </details>
+        <SourceView key={`source-${active.id}`} id={active.id} code={active.source} />
 
         <EventLog />
       </main>
     </div>
+  );
+}
+
+/**
+ * The lab's own file, highlighted. Nothing is highlighted until the
+ * panel is opened: Shiki's grammar and themes are a separate chunk,
+ * and most visits never expand this.
+ */
+function SourceView({ id, code }: { id: string; code: string }) {
+  const [open, setOpen] = useState(false);
+  const [html, setHtml] = useState<string>();
+
+  useEffect(() => {
+    if (!open || html) return;
+    let cancelled = false;
+    highlightTsx(code).then(
+      (result) => !cancelled && setHtml(result),
+      // Highlighting is decorative — a failure falls back to plain text.
+      () => {},
+    );
+    return () => {
+      cancelled = true;
+    };
+  }, [open, code, html]);
+
+  return (
+    <details className="disclosure panel" onToggle={(e) => setOpen(e.currentTarget.open)}>
+      <summary>Source — src/labs/{id}.tsx</summary>
+      {html ? (
+        <div className="source" dangerouslySetInnerHTML={{ __html: html }} />
+      ) : (
+        <pre className="source">{code}</pre>
+      )}
+    </details>
   );
 }
 

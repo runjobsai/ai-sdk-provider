@@ -8,14 +8,20 @@ import Embeddings, { meta as embeddings } from "./embeddings";
 import embeddingsSource from "./embeddings.tsx?raw";
 import GenerateText, { meta as generateText } from "./generate-text";
 import generateTextSource from "./generate-text.tsx?raw";
+import ImageLab, { meta as image } from "./image";
+import imageSource from "./image.tsx?raw";
 import ObjectLab, { meta as object } from "./object";
 import objectSource from "./object.tsx?raw";
 import ServerTools, { meta as serverTools } from "./server-tools";
 import serverToolsSource from "./server-tools.tsx?raw";
+import SpeechLab, { meta as speech } from "./speech";
+import speechSource from "./speech.tsx?raw";
 import StreamText, { meta as streamText } from "./stream-text";
 import streamTextSource from "./stream-text.tsx?raw";
 import Tools, { meta as tools } from "./tools";
 import toolsSource from "./tools.tsx?raw";
+import TranscriptionLab, { meta as transcription } from "./transcription";
+import transcriptionSource from "./transcription.tsx?raw";
 
 export interface LabMeta {
   id: string;
@@ -46,4 +52,7 @@ export const labs: Lab[] = [
   { ...serverTools, Demo: ServerTools, source: serverToolsSource },
   { ...object, Demo: ObjectLab, source: objectSource },
   { ...embeddings, Demo: Embeddings, source: embeddingsSource },
+  { ...image, Demo: ImageLab, source: imageSource },
+  { ...speech, Demo: SpeechLab, source: speechSource },
+  { ...transcription, Demo: TranscriptionLab, source: transcriptionSource },
 ];

@@ -327,6 +327,54 @@ input[type="checkbox"] {
   max-height: 34rem;
   font-size: 12px;
   tab-size: 2;
+  padding: 0;
+}
+
+/* Shiki emits its own <pre>; the .source wrapper only supplies the
+   frame, so the inner element carries the padding and scrolling. */
+.source .shiki {
+  margin: 0;
+  padding: 0.8rem;
+  background-color: transparent !important;
+  font: inherit;
+  overflow-x: auto;
+}
+
+/* Shiki wraps the listing in <code>, which would otherwise pick up the
+   pill styling the global `code` rule gives inline spans. On an inline
+   element spanning many lines that paints one ragged box per line. */
+.source .shiki code {
+  display: block;
+  background: none;
+  padding: 0;
+  border-radius: 0;
+  font-size: inherit;
+  width: fit-content;
+  min-width: 100%;
+}
+
+/* Both themes are rendered at once. With `defaultColor: false` Shiki
+   sets no `color` at all — only the `--shiki-light` and `--shiki-dark`
+   custom properties — so both branches have to be applied here or every
+   token inherits the body colour. Swapping a custom property is cheaper
+   than re-highlighting, and puts the code block on the same
+   `prefers-color-scheme` switch as the rest of the page. */
+.source .shiki,
+.source .shiki span {
+  color: var(--shiki-light);
+  font-style: var(--shiki-light-font-style, inherit);
+  font-weight: var(--shiki-light-font-weight, inherit);
+  text-decoration: var(--shiki-light-text-decoration, inherit);
+}
+
+@media (prefers-color-scheme: dark) {
+  .source .shiki,
+  .source .shiki span {
+    color: var(--shiki-dark);
+    font-style: var(--shiki-dark-font-style, inherit);
+    font-weight: var(--shiki-dark-font-weight, inherit);
+    text-decoration: var(--shiki-dark-text-decoration, inherit);
+  }
 }
 
 .usage {

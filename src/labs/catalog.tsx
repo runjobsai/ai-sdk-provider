@@ -7,7 +7,7 @@ export const meta = {
   id: "catalog",
   title: "Model catalog",
   blurb:
-    "The escape hatch. `provider.client` is the underlying @runjobsai/sdk client, for everything the AI SDK has no interface for — a model catalog being the first thing you hit. No auth needed for this one, so it is the cheapest way to check the gateway is reachable.",
+    "The escape hatch. `provider.client` is the underlying @runjobsai/sdk client, for everything the AI SDK has no interface for — a model catalog being the first thing you hit. Note that the SDK attaches a token to every request, including this one, so under browser auth the catalog triggers sign-in like any other call even though the endpoint itself is public.",
   api: ["provider.client.models.list()"],
 };
 
